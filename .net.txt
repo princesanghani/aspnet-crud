@@ -1,0 +1,87 @@
+Imports System.Data.OleDb
+Partial Class Food
+    Inherits System.Web.UI.Page
+    Dim cn As New OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\BCA\sem-5\ASP.net\project\nidp\App_Data\Student.accdb")
+
+    Protected Sub btnadd_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnadd.Click
+        Try
+            Dim str As String
+            Dim ans As Integer
+            str = "Insert into Stud values(" & txtrno.Text & " , ' " & txtname.Text & " ' , ' " & txtstream.Text & " ' , " & txtsem.Text & ")"
+            cn.Open()
+            Dim cmd As New OleDbCommand(str, cn)
+            ans = cmd.ExecuteNonQuery
+
+            MsgBox("Record Inserted Successfully :" & ans)
+            GridView1.DataBind()
+            cn.Close()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Protected Sub btncancel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btncancel.Click
+        txtrno.Text = ""
+        txtname.Text = ""
+        txtstream.Text = ""
+        txtsem.Text = ""
+    End Sub
+
+    Protected Sub btnupdate_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnupdate.Click
+        Try
+            Dim str As String
+            Dim ans As Integer
+            str = "Update Stud set Sname= ' " & txtname.Text & " ', Stream= ' " & txtstream.Text & " ' , sem=  " & txtsem.Text & " where Rno = " & txtrno.Text & "   "
+            Dim cmd As New OleDbCommand(str, cn)
+            cn.Open()
+
+            ans = cmd.ExecuteNonQuery
+            MsgBox("Record Updated Successfully :" & ans)
+            GridView1.DataBind()
+
+            cn.Close()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+
+    Protected Sub btndel_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btndel.Click
+        Try
+            Dim str As String
+            Dim ans As Integer
+            str = "Delete from Stud where Rno = " & txtrno.Text & " "
+            Dim cmd As New OleDbCommand(str, cn)
+            cn.Open()
+
+            ans = cmd.ExecuteNonQuery
+            cn.Close()
+            MsgBox("No of record are :" & ans)
+            GridView1.DataBind()
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+
+    End Sub
+
+    Protected Sub btnsearch_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnsearch.Click
+        Try
+            cn.Open()
+            Dim str As String
+            str = " Select * from Stud where Rno= " & txtrno.Text & " "
+            Dim cmd As New OleDbCommand(str, cn)
+            Dim dr As OleDbDataReader
+            dr = cmd.ExecuteReader
+
+            While dr.Read
+                txtname.Text = dr.Item(1).ToString
+                txtstream.Text = dr.Item(2).ToString
+                txtsem.Text = dr.Item(3).ToString
+            End While
+            GridView1.DataBind()
+            cn.Close()
+
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+    End Sub
+End Class
